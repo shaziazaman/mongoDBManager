@@ -56,10 +56,10 @@ try:
 except pymongo.errors.ConnectionFailure, e:
     print "Could not connect to MongoDB: %s" % e
 db =mongoClient.analytics
-hotelReviews=db.HotelReviewTest
+hotelReviews=db.HotelReview
 hotelReview = hotelReviews.find_one()
 
-index = 0
+index = 1
 cursor = hotelReviews.find()
 for document in cursor:
     reviews = document.get('Reviews')
@@ -73,8 +73,8 @@ for document in cursor:
         ratingsKeys = ratingsToChange.keys()
         for ratingKey in ratingsKeys:
             valueToChange = ratingsToChange.get(ratingKey)
-            if not isinstance(valueToChange, int):
-                valueToSave = float(valueToChange.encode('ascii','ignore'))
+            if not isinstance(valueToChange, float):
+                valueToSave = float(valueToChange)
                 ratingsToChange.update({ ratingKey: valueToSave })
         contentToScan = document2.get('Content').encode('ascii','ignore')
         travelTypeToChange = document2.get('TravelType')
@@ -86,6 +86,19 @@ for document in cursor:
     hotelInfo = document.get('HotelInfo')
     address = hotelInfo.get('Address')
     if address is not None:
-        print address
+        addressParts = address.split('<span')
+        for addressPart in addressParts:
+            if addressPart.find('property') >= 0:
+                keyIndexStart = addressPart.find(':') + 1
+                keyIndexEnd = addressPart.find('"',keyIndexStart) 
+                key = addressPart[keyIndexStart:keyIndexEnd]
+                addressValueIndexStart=addressPart.find('>',keyIndexEnd) + 1
+                addressValueIndexEnd=addressPart.find('<',addressValueIndexStart)
+                addressValue=addressPart[addressValueIndexStart:addressValueIndexEnd]
+                keyToSave = hotelInfo.get(key)
+                if keyToSave is None:
+                    hotelInfo.update({ key: addressValue})
     hotelReviews.save(document)
+    print 'updated document number ' + str(index)
+    index += 1
     
