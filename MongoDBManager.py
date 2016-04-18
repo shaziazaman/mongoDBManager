@@ -56,7 +56,7 @@ try:
 except pymongo.errors.ConnectionFailure, e:
     print "Could not connect to MongoDB: %s" % e
 db =mongoClient.analytics
-hotelReviews=db.HotelReview
+hotelReviews=db.HotelReviews
 hotelReview = hotelReviews.find_one()
 
 index = 1
