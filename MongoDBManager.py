@@ -36,7 +36,6 @@ def formatISODate(dateToFormat):
     day = (int)(dateParts[1])
     year = (int)(dateParts[2])
     isoDate = datetime(year, monthDigit, day, 0, 0, 0)
-    print(isoDate)
     return isoDate
 
 def findTravelType(content):
@@ -73,6 +72,11 @@ for document in cursor:
         ratingsKeys = ratingsToChange.keys()
         for ratingKey in ratingsKeys:
             valueToChange = ratingsToChange.get(ratingKey)
+            badIndex = ratingKey.find('(')
+            if badIndex >= 0:
+                ratingKeyNew = ratingKey[0:badIndex-1]
+                del ratingsToChange[ratingKey]
+                ratingKey = ratingKeyNew
             if not isinstance(valueToChange, float):
                 valueToSave = float(valueToChange)
                 ratingsToChange.update({ ratingKey: valueToSave })
