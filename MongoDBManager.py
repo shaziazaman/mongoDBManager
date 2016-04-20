@@ -41,11 +41,32 @@ def formatISODate(dateToFormat):
 def findTravelType(content):
     if ( (content.lower().find('leisure') >= 0)
     or (content.lower().find('family') >= 0) 
+    or (content.lower().find('wedding') >= 0)
+    or (content.lower().find('mother') >= 0)
+    or (content.lower().find('father') >= 0)
+    or (content.lower().find('kid') >= 0)
+    or (content.lower().find('baby') >= 0)
+    or (content.lower().find('son') >= 0)
+    or (content.lower().find('wife') >= 0)
+    or (content.lower().find('husband') >= 0) 
+    or (content.lower().find('daughter') >= 0) 
+    or (content.lower().find('dog') >= 0)
+    or (content.lower().find('cat') >= 0) 
+    or (content.lower().find('anniversary') >= 0) 
+    or (content.lower().find('night out') >= 0)
+    or (content.lower().find('game') >= 0)
+    or (content.lower().find('concert') >= 0)
+    or (content.lower().find('christmas') >= 0)
+    or (content.lower().find('thanksgiving') >= 0)
+    or (content.lower().find('spring break') >= 0) 
     or (content.lower().find('honeymoon') >= 0)):
+        print 'setting Leisure'
         return 'Leisure'
     elif ( (content.lower().find('business') >= 0)
     or (content.lower().find('seminar') >= 0)
+    or (content.lower().find('client') >= 0)
     or (content.lower().find('training') >= 0)):
+        print 'setting business'
         return 'Business'
     else:
         return 'Other'
@@ -77,15 +98,16 @@ for document in cursor:
                 ratingKeyNew = ratingKey[0:badIndex-1]
                 del ratingsToChange[ratingKey]
                 ratingKey = ratingKeyNew
-            if not isinstance(valueToChange, float):
-                valueToSave = float(valueToChange)
+            if not isinstance(valueToChange, int):
+                valueToSave = int(valueToChange)
                 ratingsToChange.update({ ratingKey: valueToSave })
         contentToScan = document2.get('Content').encode('ascii','ignore')
         travelTypeToChange = document2.get('TravelType')
-        travelType = findTravelType(contentToScan.encode('ascii','ignore'))
         if travelTypeToChange is None:
+            travelType = findTravelType(contentToScan.encode('ascii','ignore'))
             document2.update({'TravelType':travelType})
         elif travelTypeToChange == 'Other' or travelTypeToChange == 'null':
+            travelType = findTravelType(contentToScan.encode('ascii','ignore'))
             document2.update({'TravelType':travelType})
     hotelInfo = document.get('HotelInfo')
     address = hotelInfo.get('Address')
